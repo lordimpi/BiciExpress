@@ -31,3 +31,11 @@ google-services.json
 
 # Android Profiling
 *.hprof
+/build.gradle.kts
+/gradle.properties
+/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties
+/gradlew
+/gradlew.bat
+/gradle/libs.versions.toml
+/settings.gradle.kts
