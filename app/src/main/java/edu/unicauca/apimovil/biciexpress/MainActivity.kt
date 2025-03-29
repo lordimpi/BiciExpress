@@ -76,7 +76,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             onClick = { /* Lógica de autenticación */ },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Ingresar")
+            Text("Iniciar Sesión")
         }
     }
 }
