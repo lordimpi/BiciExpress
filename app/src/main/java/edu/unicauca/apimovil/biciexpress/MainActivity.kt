@@ -4,26 +4,19 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import edu.unicauca.apimovil.biciexpress.ui.theme.BiciExpressTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.text.input.*
-
-
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,60 +24,51 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             BiciExpressTheme {
-                LoginScreen()
+                AppContent()
             }
         }
     }
 }
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) }
+fun AppContent() {
+    val navController = rememberNavController()
+    val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center
+    val currentDestination = navController.currentBackStackEntryAsState().value?.destination?.route
+
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerContent(navController, drawerState)
+        }
     ) {
-        Text(text = "Iniciar Sesión", style = MaterialTheme.typography.headlineMedium)
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Usuario") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Contraseña") },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = { /* Lógica de autenticación */ },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text("Iniciar Sesión")
+        Scaffold(
+            topBar = {
+                if (currentDestination != Screen.Login.route) {
+                    BiciExpressTopBar(
+                        onMenuClick = {
+                            coroutineScope.launch { drawerState.open() }
+                        },
+                        onProfileClick = {
+                            // No hacer nada al pulsar ícono de perfil
+                        }
+                    )
+                }
+            }
+        ) { innerPadding ->
+            NavGraph(
+                navController = navController,
+                modifier = Modifier.padding(innerPadding)
+            )
         }
     }
 }
 
+
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    BiciExpressTheme {
-        LoginScreen()
-    }
+    LoginScreen(navController = rememberNavController())
 }
