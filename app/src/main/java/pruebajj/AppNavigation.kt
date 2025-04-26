@@ -1,5 +1,7 @@
 package pruebajj
 //package edu.unicauca.navigationaplimovil
+
+
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -29,6 +31,12 @@ fun AppNavigation(modifier: Modifier = Modifier) {
         composable(route = Screens.FinalScreen.name) {
             ScreenButton(
                 data = DataApp.getScreensData()[2],
+                onClickButton = { navController.navigate(Screens.FourthScreen.name) }
+            )
+        }
+        composable(route = Screens.FourthScreen.name) {
+            ScreenButton(
+                data = DataApp.getScreensData()[3],
                 onClickButton = { navController.navigate(Screens.HomeScreen.name) }
             )
         }
@@ -38,5 +46,6 @@ fun AppNavigation(modifier: Modifier = Modifier) {
 enum class Screens {
     HomeScreen,
     SecondScreen,
-    FinalScreen
+    FinalScreen,
+    FourthScreen
 }
