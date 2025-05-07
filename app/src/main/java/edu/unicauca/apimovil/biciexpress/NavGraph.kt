@@ -33,5 +33,8 @@ fun NavGraph(
             ProfileScreen(navController)
         }
 
+        composable(Screen.Credits.route) {
+            CreditsScreen(navController)
+        }
     }
 }
