@@ -23,7 +23,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            BiciExpressTheme {
+            BiciExpressTheme(darkTheme = false) {
                 AppContent()
             }
         }
@@ -42,7 +42,8 @@ fun AppContent() {
         drawerState = drawerState,
         drawerContent = {
             DrawerContent(navController, drawerState)
-        }
+        },
+        gesturesEnabled = false
     ) {
         Scaffold(
             topBar = {
@@ -64,11 +65,4 @@ fun AppContent() {
             )
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen(navController = rememberNavController())
 }
