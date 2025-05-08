@@ -3,6 +3,7 @@ package edu.unicauca.apimovil.biciexpress
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
@@ -28,6 +29,18 @@ fun DrawerContent(
     ModalDrawerSheet(
         drawerContainerColor = Color(0xFFE8F2E8)
     ) {
+        // 🔽 Botón para cerrar el drawer
+        IconButton(
+            onClick = {
+                coroutineScope.launch { drawerState.close() }
+            }
+        ) {
+            Icon(
+                imageVector = Icons.Default.ArrowBack,
+                contentDescription = "Cerrar menú"
+            )
+        }
+
         Spacer(modifier = Modifier.height(16.dp))
 
         DrawerMenuItem(
@@ -35,7 +48,6 @@ fun DrawerContent(
             icon = Icons.Filled.Settings,
             onClick = {
                 coroutineScope.launch { drawerState.close() }
-                // navegar a configuración
             }
         )
         DrawerMenuItem(
@@ -43,7 +55,6 @@ fun DrawerContent(
             icon = Icons.Filled.Favorite,
             onClick = {
                 coroutineScope.launch { drawerState.close() }
-                // Navegar para ir a favoritos
             }
         )
         DrawerMenuItem(
@@ -51,7 +62,6 @@ fun DrawerContent(
             icon = Icons.Filled.Search,
             onClick = {
                 coroutineScope.launch { drawerState.close() }
-                // Navegar para ayuda
             }
         )
         DrawerMenuItem(
@@ -67,7 +77,6 @@ fun DrawerContent(
             icon = Icons.Filled.Lock,
             onClick = {
                 coroutineScope.launch { drawerState.close() }
-                // Aquí puedo navegar o abrir algo
             }
         )
         DrawerMenuItem(
@@ -76,7 +85,7 @@ fun DrawerContent(
             onClick = {
                 coroutineScope.launch { drawerState.close() }
                 navController.navigate(Screen.Login.route) {
-                    popUpTo(0) // Limpia el stack de navegación
+                    popUpTo(0)
                 }
             }
         )

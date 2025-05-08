@@ -1,36 +1,57 @@
-package edu.unicauca.apimovil.biciexpress
+package edu.unicauca.apimovil.biciexpress.viewmodel
 
 import androidx.lifecycle.ViewModel
-import androidx.compose.runtime.mutableStateListOf
-
-data class Bicycle(
-    val name: String,
-    val description: String,
-    val imageUrl: String
-)
+import androidx.lifecycle.viewModelScope
+import edu.unicauca.apimovil.biciexpress.model.Bicycle
+import edu.unicauca.apimovil.biciexpress.network.RetrofitClient
+import kotlinx.coroutines.launch
+import androidx.compose.runtime.*
 
 class CatalogViewModel : ViewModel() {
-    var bicycles = mutableStateListOf<Bicycle>()
+
+    var bicycles by mutableStateOf<List<Bicycle>>(emptyList())
+        private set
+
+    var isLoading by mutableStateOf(false)
+        private set
+
+    var errorMessage by mutableStateOf("")
         private set
 
     init {
-        loadBicycles()
+        loadAvailableBicycles()
     }
 
-    private fun loadBicycles() {
-        bicycles.addAll(
-            listOf(
-                Bicycle(
-                    name = "Bicicleta urbana",
-                    description = "Color Blanco, Rin 700, Sin cambios",
-                    imageUrl = "https://homesale.com.co/cdn/shop/products/roadmaster-storm-bicicletas-roadmaster-710824.jpg?v=1707348003"
-                ),
-                Bicycle(
-                    name = "Bicicleta MTB",
-                    description = "Color Gris, Rin 27.5, Cambios: 24v",
-                    imageUrl = "https://www.ventoux.com.co/wp-content/uploads/2023/03/R8-R4720-copia.png"
-                )
-            )
-        )
+    fun loadAvailableBicycles() {
+        isLoading = true
+        errorMessage = ""
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.api.getAvailableBicycles()
+                if (response.isSuccessful) {
+                    bicycles = response.body() ?: emptyList()
+                } else {
+                    errorMessage = "Error al obtener bicicletas (${response.code()})"
+                }
+            } catch (e: Exception) {
+                errorMessage = "Error: ${e.localizedMessage ?: "Excepción desconocida"}"
+            } finally {
+                isLoading = false
+            }
+        }
+    }
+
+    fun rentBicycle(id: Int, token: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitClient.api.rentBicycle("Bearer $token", id)
+                if (!response.isSuccessful) {
+                    errorMessage = "No se pudo alquilar (${response.code()})"
+                }
+            } catch (e: Exception) {
+                errorMessage = "Error al alquilar: ${e.localizedMessage}"
+            }
+        }
     }
 }
